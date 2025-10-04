@@ -3,6 +3,8 @@ import boto3
 import json
 from utils import UtilsComponents
 import logging
+import psycopg2
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
