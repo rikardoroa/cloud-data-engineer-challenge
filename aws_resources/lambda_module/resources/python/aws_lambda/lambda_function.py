@@ -16,29 +16,32 @@ def lambda_handler(event, context):
         payload= get_conn.validate_connection()
         logger.info(payload)
 
-        method = event.get("httpMethod", "").upper()
-        query_params = event.get("queryStringParameters")
-        table = query_params.get("table", "").lower()
 
-        get_data = GetSTableData()
-
-        if event['Records']:
+        if 'Records' in event:
             get_metric = CreateS3Metric()
             response = get_metric.get_event(event)
             logger.info(response)
+            return {
+                "statusCode": 200,
+                "body": json.dumps({"message": "S3 data processed", "result": response})
+            }
 
+        method = event.get("httpMethod", "").upper()
+        query_params = event.get("queryStringParameters") or {}
+        table = query_params.get("table", "").lower() if query_params else None
+        
 
-        if query_params:
-            if table:
-                if method == "GET":
-                    result = get_metric.get_data(table)
-                    query =  get_data.getdata(result)
-                    return query
+        if method == "GET" and table:
+            get_data = GetSTableData()
+            result = get_metric.get_data(table)
+            query =  get_data.getdata(result)
+            return query
 
         return {
-        'statusCode': 200,
-        'body': json.dumps('process executed successfully!')
+        'statusCode': 400,
+        "body": json.dumps({"error": "Invalid request. Provide 'table' parameter or S3 event."})
         }
+
     except Exception as e:
         logger.error(f'can not deply changes in some resources:{str(e)}')
         
