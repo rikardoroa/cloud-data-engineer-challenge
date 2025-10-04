@@ -38,6 +38,6 @@ jobs:
         working-directory: ./aws_resources
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/rroa_challenge' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/nanlabs_challenge' && github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
         working-directory: ./aws_resources
