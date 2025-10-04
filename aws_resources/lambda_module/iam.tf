@@ -1,4 +1,4 @@
-# Lambda Role
+# Lambda IAM Role
 resource "aws_iam_role" "iam_dev_role_pr_mv" {
   name = "iam_for_dev_pr_mv"
 
@@ -16,9 +16,10 @@ resource "aws_iam_role" "iam_dev_role_pr_mv" {
   })
 }
 
-# Lambda Policy
+# Lambda Policy Document
 data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   statement {
+    sid    = "CloudWatchLogging"
     effect = "Allow"
     actions = [
       "logs:DescribeLogGroups",
@@ -36,6 +37,7 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   }
 
   statement {
+    sid    = "S3AndKMSAccess"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
@@ -45,8 +47,24 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
       "s3:PutObject",
       "s3:GetObject",
       "s3:DeleteObject",
-      "kms:*",
-      "secretsmanager:GetSecretValue",
+      "kms:*"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "SecretsManagerAccess"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "EC2NetworkInterfaceAccess"
+    effect = "Allow"
+    actions = [
       "ec2:CreateNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
       "ec2:DeleteNetworkInterface",
@@ -57,7 +75,7 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   }
 }
 
-# Attaching Role and Policy
+# Attach Inline Policy to Role
 resource "aws_iam_role_policy" "lambda_permissions" {
   name   = "lambda_logging_with_layer"
   role   = aws_iam_role.iam_dev_role_pr_mv.name
