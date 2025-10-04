@@ -1,17 +1,25 @@
 import json
 from set_transformation import CreateS3Metric
+from get_connection import GetConn
+import logging
+
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
 
 
-
+    get_conn  = GetConn()
     get_metric = CreateS3Metric()
     curated_df = get_metric.get_event(event)
-    print(curated_df)
+    payload= get_conn.validate_connection()
+
+    logger.info(curated_df)
+    logger.info(payload)
     
 
-    print('hola')
-    print(event)
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
