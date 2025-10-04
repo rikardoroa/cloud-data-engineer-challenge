@@ -1,6 +1,10 @@
 name: AWS RESOURCES DESTRUCTION PIPELINE
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
+   push:
+    branches:
+      - nanlabs_challenge
+  
   
 jobs:
   terraform:
