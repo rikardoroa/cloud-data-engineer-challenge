@@ -11,7 +11,7 @@ logger.setLevel(logging.INFO)
 
 secret_utils = UtilsComponents()
 
-class GetS3Response:
+class GetBucketData:
 
 
     def __init__(self):

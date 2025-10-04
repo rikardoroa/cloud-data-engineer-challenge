@@ -10,7 +10,7 @@ logger.setLevel(logging.INFO)
 
 secret_utils = UtilsComponents()
 
-class GetApiResponse:
+class GetTableResponse:
 
 
     def __init__(self):
@@ -22,7 +22,7 @@ class GetApiResponse:
         self.port = self.secrets['port']
 
 
-    def get_data(self, table):
+    def get_table_response(self, table):
 
             """
             Fetches data from a given PostGIS table or view and returns it as JSON.

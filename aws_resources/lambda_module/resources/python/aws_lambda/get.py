@@ -4,7 +4,7 @@ import json
 class GetSTableData:
 
     @classmethod
-    def getdata(cls, payload):
+    def get_data(cls, payload):
         """
         Wraps the given payload in a 200 OK JSON response.
 

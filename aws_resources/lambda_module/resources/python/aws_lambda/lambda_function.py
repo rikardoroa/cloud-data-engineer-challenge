@@ -1,8 +1,8 @@
 import json
-from get_transformation import GetS3Response
-from get_connection import GetConn
+from get_transformation import GetBucketData
+from get_connection import GetDbConnection
 from get import GetSTableData
-from get_response import GetApiResponse
+from get_response import GetTableResponse
 import logging
 
 
@@ -13,14 +13,14 @@ logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
 
     try:
-        get_conn  = GetConn()
-        payload= get_conn.validate_connection()
+        get_conn  = GetDbConnection()
+        payload = get_conn.validate_connection()
         logger.info(payload)
 
 
         if 'Records' in event:
-            get_metric = GetS3Response()
-            response = get_metric.get_event(event)
+            get_s3_metadata = GetBucketData()
+            response = get_s3_metadata.get_event(event)
             logger.info(response)
             return {
                 "statusCode": 200,
@@ -33,12 +33,12 @@ def lambda_handler(event, context):
         
 
         if method == "GET" and table:
-            get_data = GetSTableData()
-            get_response = GetApiResponse()
-            result = get_response.get_data(table)
-            query =  get_data.getdata(result)
+            get_response = GetTableResponse()
+            get_payload = GetSTableData()
+            result = get_response.get_table_response(table)
+            query =  get_payload.get_data(result)
             return query
-
+    
         return {
         'statusCode': 400,
         "body": json.dumps({"error": "Invalid request. Provide 'table' parameter or S3 event."})

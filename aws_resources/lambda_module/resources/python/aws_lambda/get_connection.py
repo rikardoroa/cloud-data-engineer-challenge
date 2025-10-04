@@ -12,7 +12,7 @@ logger.setLevel(logging.INFO)
 secret_utils = UtilsComponents()
 
 
-class GetConn:
+class GetDbConnection:
 
     def __init__(self):
         """
@@ -20,7 +20,7 @@ class GetConn:
         """
         self.secrets = secret_utils.get_secret()
 
-    def validate_connection(self):
+    def get_connection(self):
         """
         Creates a PostGIS-enabled database (if not exists) and sets up a crime_incidents table.
         """
