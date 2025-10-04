@@ -41,7 +41,6 @@ resource "aws_nat_gateway" "nat-t1-db" {
 # --- Public Route Table ---
 resource "aws_route_table" "rt-t1-db-public" {
   vpc_id = aws_vpc.vpc-t1-db-pg.id
-
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igt-t1-db.id
@@ -56,7 +55,6 @@ resource "aws_route_table_association" "asc-t1-db-public" {
 # --- Private Route Table ---
 resource "aws_route_table" "rt-t1-db-private" {
   vpc_id = aws_vpc.vpc-t1-db-pg.id
-
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat-t1-db.id
@@ -76,7 +74,6 @@ resource "aws_route_table_association" "asc-t1-db-private2" {
 # --- Security Groups ---
 resource "aws_security_group" "lambda" {
   vpc_id = aws_vpc.vpc-t1-db-pg.id
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -87,14 +84,12 @@ resource "aws_security_group" "lambda" {
 
 resource "aws_security_group" "rds" {
   vpc_id = aws_vpc.vpc-t1-db-pg.id
-
   ingress {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.lambda.id]
   }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -105,7 +100,7 @@ resource "aws_security_group" "rds" {
 
 # --- RDS Subnet ---
 resource "aws_db_subnet_group" "rds" {
-  name       = "rds-subnet-group"
+  name = "rds-subnet-group"
   subnet_ids = [
     aws_subnet.subnet2-t1-db-pg-private.id,
     aws_subnet.subnet3-t1-db-pg-private.id
