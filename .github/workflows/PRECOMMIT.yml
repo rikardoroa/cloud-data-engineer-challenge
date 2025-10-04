@@ -3,7 +3,7 @@ name: Terraform Pre-Commit Hooks
 on:
   pull_request:
   push:
-    branches: [ main, develop, feature/** ]
+    branches: [ main, develop, feature/**, nanlabs_challenge]
 
 jobs:
   precommit:
