@@ -37,7 +37,7 @@ class CreateS3Metric:
 
 
             # reading the bucket info
-            response = s3.get_object(Bucket=bucket, Key=key)
+            response = self.s3_client.get_object(Bucket=bucket, Key=key)
             payload = json.loads(response['Body'].read().decode('utf-8'))
             
             # creating the dataset
