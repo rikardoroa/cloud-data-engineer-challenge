@@ -1,7 +1,8 @@
 import json
-from set_transformation import CreateS3Metric
+from get_transformation import GetS3Response
 from get_connection import GetConn
 from get import GetSTableData
+from get_response import GetApiResponse
 import logging
 
 
@@ -18,7 +19,7 @@ def lambda_handler(event, context):
 
 
         if 'Records' in event:
-            get_metric = CreateS3Metric()
+            get_metric = GetS3Response()
             response = get_metric.get_event(event)
             logger.info(response)
             return {
@@ -33,7 +34,8 @@ def lambda_handler(event, context):
 
         if method == "GET" and table:
             get_data = GetSTableData()
-            result = get_metric.get_data(table)
+            get_response = GetApiResponse()
+            result = get_response.get_data(table)
             query =  get_data.getdata(result)
             return query
 
