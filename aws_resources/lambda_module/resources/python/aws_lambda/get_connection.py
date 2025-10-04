@@ -42,7 +42,7 @@ class GetConn:
             logger.error(f'[ERROR] can not retrieve the secret: {e.response["Error"]}')
 
 
-     def validate_connection(self):
+    def validate_connection(self):
         """
         Validates the connection to the PostgreSQL database using credentials from Secrets Manager.
 
