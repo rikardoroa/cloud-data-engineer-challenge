@@ -1,5 +1,5 @@
 resource "aws_db_instance" "postgres" { 
-    identifier = "dbgeoespatialins" 
+    identifier = "db-geospatial-dev" 
     engine = "postgres" 
     engine_version = "15.7" 
     instance_class = "db.t3.micro" 
