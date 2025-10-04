@@ -69,5 +69,5 @@ class GetConn:
             return {"postgres_version": result[0]}
            
         except Exception as e:
-              logger.error(f'[ERROR] can not connect to the database: {e.response["Error"]}')
+              logger.error(f'[ERROR] can not connect to the database: {str(e)}')
 
