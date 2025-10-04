@@ -1,5 +1,5 @@
 resource "aws_db_instance" "postgres" {
-  engine                 = "Postgres"
+  engine                 = "postgres"
   identifier             = "dbgeospatialdev"
   allocated_storage      = 20
   engine_version         = "15.7"
