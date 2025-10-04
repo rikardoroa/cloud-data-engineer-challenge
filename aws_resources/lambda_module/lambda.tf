@@ -118,3 +118,43 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 
   depends_on = [aws_lambda_permission.allow_s3]
 }
+
+
+#sns topic for lambda alerts
+resource "aws_sns_topic" "lambda_alerts" {
+  name = "lambda-alerts"
+}
+
+# alerts if the s3 event fails to trigger the lambda
+resource "aws_cloudwatch_metric_alarm" "s3_event_failure_alarm" {
+  alarm_name          = "S3-Event-Failure-Alarm"
+  alarm_description   = "Triggered when S3 event notification to Lambda fails"
+  namespace           = "AWS/S3"
+  metric_name         = "EventNotificationsFailed"
+  statistic           = "Sum"
+  period              = 300
+  threshold           = 1
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  alarm_actions       = [aws_sns_topic.lambda_alerts.arn]
+  dimensions = {
+    BucketName = var.bucket_id
+  }
+}
+
+# alerts if the lambda fails in any case
+resource "aws_cloudwatch_metric_alarm" "lambda_error_alarm" {
+  alarm_name          = "Lambda-Error-Alarm"
+  alarm_description   = "Triggered when Lambda function reports errors"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = 60
+  statistic           = "Sum"
+  threshold           = 1
+  alarm_actions       = [aws_sns_topic.lambda_alerts.arn]
+  dimensions = {
+    FunctionName = aws_lambda_function.lambda_function.function_name
+  }
+}
