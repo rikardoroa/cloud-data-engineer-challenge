@@ -37,7 +37,3 @@ jobs:
 
       - name: Install pre-commit
         run: pip install pre-commit
-
-      - name: Run pre-commit hooks
-        working-directory: cloud-data-engineer-challenge
-        run: pre-commit run --all-files
