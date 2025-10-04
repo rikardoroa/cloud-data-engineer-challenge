@@ -1,5 +1,4 @@
 name: AWS RESOURCES CREATION PIPELINE
-
 on:
   push:
     branches:
