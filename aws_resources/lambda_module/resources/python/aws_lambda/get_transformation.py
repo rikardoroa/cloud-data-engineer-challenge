@@ -24,8 +24,64 @@ class GetBucketData:
         self.port = self.secrets['port']
 
     
-    def get_event(self,event):
+    def schema_validation(self, df):
+        """
+        Validates and enforces the data schema of a given pandas DataFrame
+        according to a predefined column structure and data type mapping.
 
+        This method ensures that:
+        - All required columns are present in the DataFrame.
+        - Each column has the expected data type.
+        - If a column's data type differs, it attempts to cast it to the expected one.
+        - Logs detailed information about type validation, casting, and failures.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame to be validated and corrected.
+
+        Raises:
+            ValueError: If one or more required columns are missing from the DataFrame.
+
+        Returns:
+            pd.DataFrame: A validated DataFrame with corrected data types where possible.
+
+        """
+        
+        schema_dict = {
+            "X": "float64", "Y": "float64", "CCN": "int64",
+            "REPORT_DAT": "object", "SHIFT": "object", "METHOD": "object",
+            "OFFENSE": "object", "BLOCK": "object", "XBLOCK": "float64",
+            "YBLOCK": "float64", "WARD": "float64", "ANC": "object",
+            "DISTRICT": "float64", "PSA": "float64",
+            "NEIGHBORHOOD_CLUSTER": "object", "BLOCK_GROUP": "object",
+            "CENSUS_TRACT": "float64", "VOTING_PRECINCT": "object",
+            "LATITUDE": "float64", "LONGITUDE": "float64",
+            "BID": "object", "START_DATE": "object", "END_DATE": "object",
+            "OBJECTID": "int64", "OCTO_RECORD_ID": "float64"
+        }
+
+        missing_cols = [col for col in schema_dict if col not in df.columns]
+        if missing_cols:
+            raise ValueError(f"Missing required columns: {missing_cols}")
+
+        for col in df.columns:
+            expected_type = schema_dict.get(col)
+            actual_type = str(df[col].dtype)
+
+            if expected_type == actual_type:
+                logger.info(f"Column {col} has the correct data type: {expected_type}")
+            else:
+                try:
+                    logger.info(f"Casting {col} with {actual_type} to {expected_type}")
+                    df[col] = df[col].astype(expected_type)
+                except Exception as e:
+                    logger.error(f"Failed to convert column {col} from {actual_type} to {expected_type}: {e}")
+                    continue
+
+        logger.info("Schema validation completed successfully.")
+        return df
+
+    
+    def get_event(self,event):
         """
         Reads a CSV file from an S3 event and loads its crime incident data 
         into a PostGIS-enabled PostgreSQL table.
@@ -42,17 +98,16 @@ class GetBucketData:
         """
 
         try:
-
             # extracting key and bucket data
             bucket = event['Records'][0]['s3']['bucket']['name']
             key = event['Records'][0]['s3']['object']['key']
-
 
             # reading the bucket info
             response = self.s3_client.get_object(Bucket=bucket, Key=key)
             df = pd.read_csv(response['Body'])
 
-           
+            validated_df = self.schema_validation(df)
+
             # Connect to PostGIS database
             conn = psycopg2.connect(
                 host=self.host,
@@ -72,7 +127,7 @@ class GetBucketData:
                 row.get('LATITUDE'), row.get('LONGITUDE'),
                 row.get('LONGITUDE'), row.get('LATITUDE')
             )
-            for _, row in df.iterrows()
+            for _, row in validated_df.iterrows()
             ]
 
             # sql template
@@ -90,29 +145,6 @@ class GetBucketData:
                     latitude, longitude, geom
                 ) VALUES %s;
             """, records, template=template)
-
-            # # Insert each record
-            # for _, row in df.iterrows():
-            #     cur.execute("""
-            #         INSERT INTO crime_incidents (
-            #             ccn, report_date, shift, method, offense, block,
-            #             ward, district, psa, neighborhood_cluster,
-            #             latitude, longitude, geom
-            #         )
-            #         VALUES (
-            #             %s, %s, %s, %s, %s, %s,
-            #             %s, %s, %s, %s,
-            #             %s, %s,
-            #             ST_SetSRID(ST_MakePoint(%s, %s), 4326)
-            #         );
-            #     """, (
-            #         row.get('CCN'), row.get('REPORT_DAT'), row.get('SHIFT'),
-            #         row.get('METHOD'), row.get('OFFENSE'), row.get('BLOCK'),
-            #         row.get('WARD'), row.get('DISTRICT'), row.get('PSA'),
-            #         row.get('NEIGHBORHOOD_CLUSTER'),
-            #         row.get('LATITUDE'), row.get('LONGITUDE'),
-            #         row.get('LONGITUDE'), row.get('LATITUDE')
-            #     ))
 
             cur.execute("""
                 SELECT EXISTS (

@@ -23,7 +23,6 @@ class GetTableResponse:
 
 
     def get_table_response(self, table):
-
             """
             Fetches data from a given PostGIS table or view and returns it as JSON.
 
