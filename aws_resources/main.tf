@@ -23,8 +23,6 @@ module "aws_lambda_utils" {
 module "aws_rds_utils" {
   source         = "./rds_module"
   db_password    = var.db_password
-  db_user        = var.db_user
-  db_name        = var.db_name
   security_group = module.aws_network_utils.security_group
   subnet_group   = module.aws_network_utils.subnet_group
 }
