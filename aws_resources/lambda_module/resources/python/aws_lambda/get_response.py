@@ -47,7 +47,7 @@ class GetApiResponse:
                     password=self.password,
                     port=self.port
                 )
-                cur2 = conn.cursor()
+                cur2 = conn2.cursor()
 
                 metadata = {
                         'crime_incidents': 'select * from crime_incidents',
