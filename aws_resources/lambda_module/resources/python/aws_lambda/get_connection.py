@@ -57,9 +57,9 @@ class GetConn:
             rds_credentials = self.get_secret()
             logger.info(rds_credentials)
             conn = psycopg2.connect(
-                host=rds_credentials['host'],      # endpoint de RDS
+                host=rds_credentials['host'].split(":")[0], 
                 database=rds_credentials['dbname'],
-                user=rds_credentials['user'],
+                user=rds_credentials['username'],
                 password=rds_credentials['password'],
                 port=rds_credentials['port']
             )
