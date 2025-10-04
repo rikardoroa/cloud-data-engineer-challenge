@@ -5,3 +5,12 @@ output "subnet_group"{
 output "security_group" {
     value = aws_security_group.rds.id
 }
+
+
+output "subnet2"{
+    value = aws_subnet.subnet2-t1-db-pg-private.id
+}
+
+output "security_group_lambda" {
+    value = aws_security_group.lambda.id
+}

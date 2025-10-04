@@ -78,6 +78,15 @@ resource "aws_lambda_function" "lambda_function" {
   timeout          = var.lambda_timeout
   memory_size      = 500
 
+    vpc_config {
+    subnet_ids = [
+      aws_subnet.subnet2-t1-db-pg-private.id
+    ]
+    security_group_ids = [
+      aws_security_group.lambda_sg.id
+    ]
+  }
+
   environment {
     variables = {
       bucket = var.target_bucket

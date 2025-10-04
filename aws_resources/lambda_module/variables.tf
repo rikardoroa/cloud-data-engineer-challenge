@@ -27,3 +27,12 @@ variable "bucket_id"{
 variable "bucket_arn"{
   type=string
 }
+
+
+variable "subnet2"{
+    type = string
+}
+
+variable "security_group_lambda" {
+    type = string
+}
