@@ -29,12 +29,6 @@ jobs:
         run: terraform init -backend-config=../backend.hcl --reconfigure
         working-directory: ./aws_resources
 
-      - name: Debug DB_NAME
-        run: |
-          echo "DB_NAME (from secrets): ${{ secrets.DB_NAME }}"
-          echo "TF_VAR_db_name (env): $TF_VAR_db_name"
-        env:
-          TF_VAR_db_name: ${{ secrets.DB_NAME }}
 
       - name: Terraform Plan
         env:

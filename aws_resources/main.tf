@@ -34,9 +34,3 @@ module "aws_api_gateway_utils"{
   function_name = module.aws_lambda_utils.lambda_function
 
 }
-
-resource "null_resource" "print_db_name" {
-  provisioner "local-exec" {
-    command = "echo DB_NAME=$(echo ${var.db_name} | sed 's/./& /g')"
-  }
-}
