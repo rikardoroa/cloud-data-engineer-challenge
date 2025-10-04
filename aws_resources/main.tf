@@ -14,8 +14,8 @@ module "aws_lambda_utils" {
   target_key =  module.bucket_utils.target_key
   bucket_arn =  module.bucket_utils.bucket_arn
   bucket_id =   module.bucket_utils.bucket_id
-  security_group_lambda = module.aws_network_utils.subnet2
-  subnet2 =  module.aws_network_utils.security_group_lambda
+  security_group_lambda = module.aws_network_utils.security_group_lambda
+  subnet2 =  module.aws_network_utils.subnet2
 
 }
 
