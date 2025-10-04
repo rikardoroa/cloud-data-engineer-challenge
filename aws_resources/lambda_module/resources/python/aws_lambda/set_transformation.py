@@ -39,11 +39,8 @@ class CreateS3Metric:
 
             # reading the bucket info
             response = self.s3_client.get_object(Bucket=bucket, Key=key)
-            payload = json.loads(response['Body'].read().decode('utf-8'))
-            
-            # creating the dataset
-            df = pd.DataFrame(payload)
-
+            df = pd.read_csv(response['Body'])
+        
             # apply sales metric per month and year
             total_sales_per_month_year = df.groupby(['category_id','month','year']).agg(total_price=('price','sum')).reset_index(drop=False)
 
