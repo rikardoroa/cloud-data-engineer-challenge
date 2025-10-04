@@ -13,6 +13,7 @@ class CreateS3Metric:
 
     def __init__(self):
         self.secrets = secret_utils.get_secret()
+        self.s3_client = boto3.client('s3')
 
     
     def get_event(self,event):
