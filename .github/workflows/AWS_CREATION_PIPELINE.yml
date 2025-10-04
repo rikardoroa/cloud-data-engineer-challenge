@@ -29,6 +29,13 @@ jobs:
         run: terraform init -backend-config=../backend.hcl --reconfigure
         working-directory: ./aws_resources
 
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: ./aws_resources
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./aws_resources
 
       - name: Terraform Plan
         env:
