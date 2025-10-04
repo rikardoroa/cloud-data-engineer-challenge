@@ -2,9 +2,9 @@ data "aws_caller_identity" "current" {}
 
 # Creating the KMS key resource
 resource "aws_kms_key" "dts_kms_key" {
-  description         = "Key for encryption"
-  enable_key_rotation = true
-  key_spec            = "SYMMETRIC_DEFAULT"
+  description              = "Key for encryption"
+  enable_key_rotation      = true
+  customer_master_key_spec = "SYMMETRIC_DEFAULT"
 }
 
 # Activating KMS key policy
