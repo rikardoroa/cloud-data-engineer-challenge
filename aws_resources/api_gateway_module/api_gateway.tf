@@ -1,5 +1,6 @@
 
-# REST API   
+# Creates the main API Gateway REST API.
+# This defines the root API container for both GET and POST methods.
 resource "aws_api_gateway_rest_api" "t1_db_conn_api" {
   name        = "postgresql-conn"
   description = "RDS postgresql API connection"
@@ -10,14 +11,14 @@ resource "aws_api_gateway_rest_api" "t1_db_conn_api" {
 }
 
 
-# creating api gateway path
+# Creates a specific resource path under the root of the API.
 resource "aws_api_gateway_resource" "t1_db_conn_api_path" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
   parent_id   = aws_api_gateway_rest_api.t1_db_conn_api.root_resource_id
   path_part   = "postgresql-api-conn-path"
 }
 
-# creating api gateway method for post
+# Defines the POST HTTP method for the API resource.
 resource "aws_api_gateway_method" "t1_db_conn_api_post" {
   rest_api_id   = aws_api_gateway_rest_api.t1_db_conn_api.id
   resource_id   = aws_api_gateway_resource.t1_db_conn_api_path.id
@@ -25,7 +26,7 @@ resource "aws_api_gateway_method" "t1_db_conn_api_post" {
   authorization = "NONE"
 }
 
-# post response
+# Defines the expected 200 OK response for POST requests.
 resource "aws_api_gateway_method_response" "response_200_post" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
   resource_id = aws_api_gateway_resource.t1_db_conn_api_path.id
@@ -37,20 +38,22 @@ resource "aws_api_gateway_method_response" "response_200_post" {
   }
 }
 
-# post integration
+# Integrates the POST method with the target Lambda function using AWS_PROXY.
+# AWS_PROXY means API Gateway passes the full request directly to Lambda.
 resource "aws_api_gateway_integration" "integration_post" {
   rest_api_id             = aws_api_gateway_rest_api.t1_db_conn_api.id
   resource_id             = aws_api_gateway_resource.t1_db_conn_api_path.id
   http_method             = aws_api_gateway_method.t1_db_conn_api_post.http_method
   type                    = "AWS_PROXY"
 
-  # Con AWS_PROXY el método de integración debe ser POST, aunque el externo sea POST o GET
+  # With AWS_PROXY integration, the integration method must always be POST
+  # even if the external method (client request) is GET or POST.
   integration_http_method = "POST"
   uri                     = var.invoke_arn
 }
 
 
-# creating api gateway method for get
+# Defines the GET HTTP method for the same API resource.
 resource "aws_api_gateway_method" "t1_db_conn_api_get" {
   rest_api_id   = aws_api_gateway_rest_api.t1_db_conn_api.id
   resource_id   = aws_api_gateway_resource.t1_db_conn_api_path.id
@@ -58,7 +61,7 @@ resource "aws_api_gateway_method" "t1_db_conn_api_get" {
   authorization = "NONE"
 }
 
-# get response
+# Defines the expected 200 OK response for GET requests.
 resource "aws_api_gateway_method_response" "response_200_get" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
   resource_id = aws_api_gateway_resource.t1_db_conn_api_path.id
@@ -70,7 +73,8 @@ resource "aws_api_gateway_method_response" "response_200_get" {
   }
 }
 
-# get integration
+# Integrates the GET method with the same Lambda function using AWS_PROXY.
+# The integration method must remain POST when using AWS_PROXY.
 resource "aws_api_gateway_integration" "integration_get" {
   rest_api_id             = aws_api_gateway_rest_api.t1_db_conn_api.id
   resource_id             = aws_api_gateway_resource.t1_db_conn_api_path.id
@@ -82,14 +86,14 @@ resource "aws_api_gateway_integration" "integration_get" {
   uri                     = var.invoke_arn
 }
 
-# lambda invokation
+# Grants API Gateway permission to invoke the Lambda function.
 resource "aws_lambda_permission" "allow_apigateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = var.function_name
   principal     = "apigateway.amazonaws.com"
 
-  # Permite cualquier método dentro del stage dev
+
   source_arn = "${aws_api_gateway_rest_api.t1_db_conn_api.execution_arn}/dev/*"
 }
 
@@ -110,6 +114,8 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   ]
 }
 
+# Creates the "dev" stage for the API Gateway deployment.
+# This defines the URL stage used in the final endpoint.
 resource "aws_api_gateway_stage" "postgresql_api_conn_stage" {
   rest_api_id   = aws_api_gateway_rest_api.t1_db_conn_api.id
   deployment_id = aws_api_gateway_deployment.api_deployment.id
@@ -118,11 +124,10 @@ resource "aws_api_gateway_stage" "postgresql_api_conn_stage" {
 
 
 #caching and  throttling
-
 resource "aws_api_gateway_method_settings" "api_method_settings" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
   stage_name  = aws_api_gateway_stage.postgresql_api_conn_stage.stage_name
-  method_path = "*/*"   # Cubre todos los verbos y rutas
+  method_path = "*/*"   
 
   settings {
     cache_data_encrypted   = false

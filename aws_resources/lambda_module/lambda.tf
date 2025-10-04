@@ -100,7 +100,7 @@ resource "aws_lambda_function" "lambda_function" {
 }
 
 
-
+# adding s3 as a lambda trigger
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3InvokeLambda"
   action        = "lambda:InvokeFunction"
@@ -108,10 +108,9 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
   source_arn    = var.bucket_arn
 }
-
+# notification when a object is created (Put Event) to trigger the lambda function
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = var.bucket_id
-
   lambda_function {
     lambda_function_arn = aws_lambda_function.lambda_function.arn
     events              = ["s3:ObjectCreated:Put"] 

@@ -29,7 +29,7 @@ resource "aws_internet_gateway" "igt-t1-db" {
 }
 
 
-# --- NAT Gateway ---
+# --- Elastic Ip and NAT Gateway ---
 resource "aws_eip" "nat-eip-t1-db" {
   domain   = "vpc"
 }

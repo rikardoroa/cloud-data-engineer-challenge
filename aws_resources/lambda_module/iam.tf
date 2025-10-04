@@ -1,3 +1,4 @@
+#lambda role
 resource "aws_iam_role" "iam_dev_role_pr_mv" {
   name = "iam_for_dev_pr_mv"
   
@@ -15,7 +16,7 @@ resource "aws_iam_role" "iam_dev_role_pr_mv" {
   })
 }
 
-
+#lambda policy
 data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   statement {
     effect = "Allow"
@@ -57,7 +58,7 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
 }
 
 
-#lambda role and policy
+#attaching role and policy
 resource "aws_iam_role_policy" "lambda_permissions" {
   name   = "lambda_logging_with_layer"
   role   = aws_iam_role.iam_dev_role_pr_mv.name
