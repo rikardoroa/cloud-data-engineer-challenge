@@ -4,7 +4,7 @@ resource "aws_db_instance" "postgres" {
     allocated_storage = 20 
     engine_version = "15.7" 
     instance_class = "db.t3.micro"
-    username = var.db_user 
+    username = "postgres" 
     password = var.db_password
     vpc_security_group_ids = [var.security_group] 
     db_subnet_group_name = var.subnet_group
