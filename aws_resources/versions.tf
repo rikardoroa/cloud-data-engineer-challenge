@@ -14,5 +14,4 @@ terraform {
     dynamodb_table = "terraform-status-table"
     region         = "us-east-2"
   }
-
 }
