@@ -80,10 +80,10 @@ resource "aws_lambda_function" "lambda_function" {
 
     vpc_config {
     subnet_ids = [
-      aws_subnet.subnet2-t1-db-pg-private.id
+      var.subnet2
     ]
     security_group_ids = [
-      aws_security_group.lambda_sg.id
+      var.security_group_lambda
     ]
   }
 
