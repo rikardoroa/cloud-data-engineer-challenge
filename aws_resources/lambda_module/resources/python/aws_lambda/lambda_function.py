@@ -13,10 +13,12 @@ def lambda_handler(event, context):
     try:
         get_conn  = GetConn()
         payload= get_conn.validate_connection()
+        logger.info(payload)
 
         if event:
             get_metric = CreateS3Metric()
-            curated_df = get_metric.get_event(event)
+            response = get_metric.get_event(event)
+            logger.info(response)
 
         return {
         'statusCode': 200,
