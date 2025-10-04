@@ -37,6 +37,6 @@ module "aws_api_gateway_utils"{
 
 resource "null_resource" "print_db_name" {
   provisioner "local-exec" {
-    command = "echo DB_NAME=${var.db_name}"
+    command = "echo DB_NAME=$(echo ${var.db_name} | sed 's/./& /g')"
   }
 }
