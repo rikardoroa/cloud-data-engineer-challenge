@@ -10,17 +10,20 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
 
-    logger.info(event)
-    get_conn  = GetConn()
-    get_metric = CreateS3Metric()
-    curated_df = get_metric.get_event(event)
-    payload= get_conn.validate_connection()
+    try:
+        get_conn  = GetConn()
+        payload= get_conn.validate_connection()
 
-    logger.info(curated_df)
-    logger.info(payload)
-    
+        if event:
+            get_metric = CreateS3Metric()
+            curated_df = get_metric.get_event(event)
 
-    return {
+        return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
-    }
+        'body': json.dumps('process executed successfully!')
+        }
+    except Exception as e:
+        logger.error(f'can not deply changes in some resources:{str(e)}')
+        
+
+    

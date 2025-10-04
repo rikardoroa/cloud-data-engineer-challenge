@@ -4,70 +4,112 @@ import pandas as pd
 from botocore.exceptions import ClientError
 import psycopg2
 import logging
-
-
+from utils import UtilsComponents
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+secret_utils = UtilsComponents()
 
 
 class GetConn:
 
     def __init__(self):
         """
-        Initializes the AWS Secrets Manager client to retrieve Snowflake credentials.
+        Initializes the AWS Secrets Manager client to retrieve PostgreSQL credentials.
         """
-
-        self.session = boto3.session.Session()
-        self.client = self.session.client(service_name='secretsmanager')
-        self.secret = "postgresql_conn"
-
-    def get_secret(self):
-        """
-        Retrieves Postgresql connection credentials from AWS Secrets Manager.
-
-        Returns:
-            dict: A dictionary containing keys such as 'user', 'password', 'endpoint',
-            'port' and 'database'
-
-        Logs:
-            Logs an error message if the secret cannot be retrieved.
-        """
-
-        try:
-            response = self.client.get_secret_value(SecretId=self.secret)
-            credentials = json.loads(response['SecretString'])
-            return credentials
-        except ClientError as e:
-            logger.error(f'[ERROR] can not retrieve the secret: {e.response["Error"]}')
-
+        self.secrets = secret_utils.get_secret()
 
     def validate_connection(self):
         """
-        Validates the connection to the PostgreSQL database using credentials from Secrets Manager.
-
-        Returns:
-            dict: A dictionary containing the PostgreSQL server version (e.g., {"postgres_version": "15.7"}).
-
-        Logs:
-            - Logs the retrieved credentials for debugging.
-            - Logs an error message if the connection cannot be established.
+        Creates a PostGIS-enabled database (if not exists) and sets up a crime_incidents table.
         """
         try:
-            rds_credentials = self.get_secret()
-            logger.info(rds_credentials)
-            conn = psycopg2.connect(
-                host=rds_credentials['host'].split(":")[0], 
-                database=rds_credentials['dbname'],
-                user=rds_credentials['username'],
-                password=rds_credentials['password'],
-                port=rds_credentials['port']
-            )
-            cur = conn.cursor()
-            cur.execute("SELECT version();")
-            result = cur.fetchone()
-            return {"postgres_version": result[0]}
-           
-        except Exception as e:
-              logger.error(f'[ERROR] can not connect to the database: {str(e)}')
+            #rds_credentials = self.get_secret()
+            logger.info(self.secrets)
 
+            host = self.secrets['host'].split(":")[0]
+            db_name = self.secrets['dbname']
+            user = self.secrets['username']
+            password = self.secrets['password']
+            port = self.secrets['port']
+            new_dbname = "geospatialinfo"
+
+            # Connect to main DB and create geospatial DB if needed
+            conn = psycopg2.connect(
+                host=host,
+                database=db_name,
+                user=user,
+                password=password,
+                port=port
+            )
+            conn.autocommit = True
+            cur = conn.cursor()
+
+            logger.info(f"Checking if database '{new_dbname}' exists...")
+            cur.execute("SELECT 1 FROM pg_database WHERE datname = %s;", (new_dbname,))
+            exists = cur.fetchone()
+
+            if not exists:
+                cur.execute(f"CREATE DATABASE {new_dbname};")
+                logger.info(f"Database '{new_dbname}' created successfully.")
+            else:
+                logger.info(f"ℹ️ Database '{new_dbname}' already exists.")
+
+            cur.close()
+            conn.close()
+
+            # Connect to the new DB to enable PostGIS and create table
+            conn2 = psycopg2.connect(
+                host=host,
+                database=new_dbname,
+                user=user,
+                password=password,
+                port=port
+            )
+            cur2 = conn2.cursor()
+
+            cur2.execute("CREATE EXTENSION IF NOT EXISTS postgis;")
+            cur2.execute("CREATE EXTENSION IF NOT EXISTS postgis_topology;")
+
+            cur2.execute("""
+                CREATE TABLE IF NOT EXISTS crime_incidents (
+                    id SERIAL PRIMARY KEY,
+                    ccn TEXT,
+                    report_date TIMESTAMPTZ,
+                    shift TEXT,
+                    method TEXT,
+                    offense TEXT,
+                    block TEXT,
+                    ward TEXT,
+                    district TEXT,
+                    psa TEXT,
+                    neighborhood_cluster TEXT,
+                    latitude DOUBLE PRECISION,
+                    longitude DOUBLE PRECISION,
+                    geom GEOMETRY(Point, 4326)
+                );
+            """)
+
+            cur2.execute("""
+                CREATE INDEX IF NOT EXISTS idx_crime_geom
+                ON crime_incidents USING GIST (geom);
+            """)
+
+            conn2.commit()
+
+            cur2.execute("SELECT postgis_full_version();")
+            postgis_version = cur2.fetchone()[0]
+            logger.info(f"PostGIS enabled successfully in '{new_dbname}': {postgis_version}")
+
+            cur2.close()
+            conn2.close()
+
+            return {
+                "database_created": new_dbname,
+                "postgis_version": postgis_version
+            }
+
+        except Exception as e:
+            logger.error(f"[ERROR] cannot connect to the database: {str(e)}")
+            return {"error": str(e)}
