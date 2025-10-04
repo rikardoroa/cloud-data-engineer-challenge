@@ -2,6 +2,7 @@ import pandas as pd
 import boto3
 import json
 from utils import UtilsComponents
+import logging
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
