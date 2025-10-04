@@ -1,5 +1,5 @@
 variable "curated_bucket" {
-    description = "curated bucket"
-    type = string
-    default = "mv-pr-dt"
+  description = "Curated bucket"
+  type        = string
+  default     = "mv-pr-dt"
 }

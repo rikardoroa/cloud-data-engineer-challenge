@@ -1,20 +1,20 @@
-# --- VPC --- 
-resource "aws_vpc" "vpc-t1-db-pg" { 
-    cidr_block = "10.0.0.0/17" 
-} 
+# --- VPC ---
+resource "aws_vpc" "vpc-t1-db-pg" {
+  cidr_block = "10.0.0.0/17"
+}
 
+# --- subnets ---
+resource "aws_subnet" "subnet1-t1-db-pg-public" {
+  vpc_id                  = aws_vpc.vpc-t1-db-pg.id
+  cidr_block              = "10.0.64.0/19"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-2a"
+}
 
-# --- subnets --- 
-resource "aws_subnet" "subnet1-t1-db-pg-public" { 
-    vpc_id = aws_vpc.vpc-t1-db-pg.id 
-    cidr_block = "10.0.64.0/19"
-    map_public_ip_on_launch = true 
-    availability_zone = "us-east-2a" 
-} 
-resource "aws_subnet" "subnet2-t1-db-pg-private" { 
-    vpc_id = aws_vpc.vpc-t1-db-pg.id 
-    cidr_block = "10.0.96.0/20" 
-    availability_zone = "us-east-2a" 
+resource "aws_subnet" "subnet2-t1-db-pg-private" {
+  vpc_id            = aws_vpc.vpc-t1-db-pg.id
+  cidr_block        = "10.0.96.0/20"
+  availability_zone = "us-east-2a"
 }
 
 resource "aws_subnet" "subnet3-t1-db-pg-private" {
@@ -28,18 +28,15 @@ resource "aws_internet_gateway" "igt-t1-db" {
   vpc_id = aws_vpc.vpc-t1-db-pg.id
 }
 
-
 # --- Elastic Ip and NAT Gateway ---
 resource "aws_eip" "nat-eip-t1-db" {
-  domain   = "vpc"
+  domain = "vpc"
 }
 
 resource "aws_nat_gateway" "nat-t1-db" {
   allocation_id = aws_eip.nat-eip-t1-db.id
   subnet_id     = aws_subnet.subnet1-t1-db-pg-public.id
 }
-
-
 
 # --- Public Route Table ---
 resource "aws_route_table" "rt-t1-db-public" {
@@ -49,7 +46,6 @@ resource "aws_route_table" "rt-t1-db-public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igt-t1-db.id
   }
-
 }
 
 resource "aws_route_table_association" "asc-t1-db-public" {
@@ -57,7 +53,7 @@ resource "aws_route_table_association" "asc-t1-db-public" {
   route_table_id = aws_route_table.rt-t1-db-public.id
 }
 
-#--- Private Route Table  ---#
+# --- Private Route Table ---
 resource "aws_route_table" "rt-t1-db-private" {
   vpc_id = aws_vpc.vpc-t1-db-pg.id
 
@@ -65,7 +61,6 @@ resource "aws_route_table" "rt-t1-db-private" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat-t1-db.id
   }
-
 }
 
 resource "aws_route_table_association" "asc-t1-db-private" {
@@ -77,7 +72,6 @@ resource "aws_route_table_association" "asc-t1-db-private2" {
   subnet_id      = aws_subnet.subnet3-t1-db-pg-private.id
   route_table_id = aws_route_table.rt-t1-db-private.id
 }
-
 
 # --- Security Groups ---
 resource "aws_security_group" "lambda" {
@@ -112,7 +106,8 @@ resource "aws_security_group" "rds" {
 # --- RDS Subnet ---
 resource "aws_db_subnet_group" "rds" {
   name       = "rds-subnet-group"
-  subnet_ids = [aws_subnet.subnet2-t1-db-pg-private.id,aws_subnet.subnet3-t1-db-pg-private.id]
-
+  subnet_ids = [
+    aws_subnet.subnet2-t1-db-pg-private.id,
+    aws_subnet.subnet3-t1-db-pg-private.id
+  ]
 }
-

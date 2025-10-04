@@ -4,35 +4,32 @@ variable "lambda_timeout" {
   default     = 360 # 6 minutes
 }
 
-variable "aws_region"{
+variable "aws_region" {
   description = "aws region"
-  type = string
-  default = "us-east-2"
+  type        = string
+  default     = "us-east-2"
 }
 
-
 variable "target_bucket" {
-  type=string
+  type = string
 }
 
 variable "target_key" {
-  type=string
+  type = string
 }
 
-
-variable "bucket_id"{
-  type=string
+variable "bucket_id" {
+  type = string
 }
 
-variable "bucket_arn"{
-  type=string
+variable "bucket_arn" {
+  type = string
 }
 
-
-variable "subnet2"{
-    type = string
+variable "subnet2" {
+  type = string
 }
 
 variable "security_group_lambda" {
-    type = string
+  type = string
 }

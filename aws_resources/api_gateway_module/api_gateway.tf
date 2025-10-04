@@ -128,7 +128,6 @@ resource "aws_api_gateway_method_settings" "api_method_settings" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
   stage_name  = aws_api_gateway_stage.postgresql_api_conn_stage.stage_name
   method_path = "*/*"   
-
   settings {
     cache_data_encrypted   = false
     cache_ttl_in_seconds   = 0

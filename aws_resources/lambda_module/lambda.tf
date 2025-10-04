@@ -7,9 +7,11 @@ provider "docker" {
 resource "aws_ecr_repository" "lambda_repository" {
   name                 = "lambda-mv-pr-repository"
   image_tag_mutability = "MUTABLE"
+
   image_scanning_configuration {
     scan_on_push = true
   }
+
   force_delete = true
 
   tags = {
@@ -51,7 +53,7 @@ resource "null_resource" "docker_build_push" {
       aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin $REPO_URL
 
       echo "Building Docker image..."
-      docker build  -t aws_lambda:latest -f ${path.module}/resources/DockerFile ${path.module}/resources && docker tag aws_lambda:latest ${aws_ecr_repository.lambda_repository.repository_url}:latest
+      docker build -t aws_lambda:latest -f ${path.module}/resources/DockerFile ${path.module}/resources && docker tag aws_lambda:latest ${aws_ecr_repository.lambda_repository.repository_url}:latest
 
       echo "Tagging Docker image..."
       docker tag aws_lambda:latest $REPO_URL:$HASH
@@ -71,14 +73,14 @@ resource "null_resource" "docker_build_push" {
 
 # AWS Lambda function configuration
 resource "aws_lambda_function" "lambda_function" {
-  function_name    = "put-mv-dt-db-lambda"
-  image_uri        = "${aws_ecr_repository.lambda_repository.repository_url}:${data.archive_file.lambda_code.output_md5}"
-  role             = aws_iam_role.iam_dev_role_pr_mv.arn
-  package_type     = "Image"
-  timeout          = var.lambda_timeout
-  memory_size      = 500
+  function_name = "put-mv-dt-db-lambda"
+  image_uri     = "${aws_ecr_repository.lambda_repository.repository_url}:${data.archive_file.lambda_code.output_md5}"
+  role          = aws_iam_role.iam_dev_role_pr_mv.arn
+  package_type  = "Image"
+  timeout       = var.lambda_timeout
+  memory_size   = 500
 
-    vpc_config {
+  vpc_config {
     subnet_ids = [
       var.subnet2
     ]
@@ -99,7 +101,6 @@ resource "aws_lambda_function" "lambda_function" {
   ]
 }
 
-
 # adding s3 as a lambda trigger
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3InvokeLambda"
@@ -108,19 +109,20 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
   source_arn    = var.bucket_arn
 }
+
 # notification when a object is created (Put Event) to trigger the lambda function
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = var.bucket_id
+
   lambda_function {
     lambda_function_arn = aws_lambda_function.lambda_function.arn
-    events              = ["s3:ObjectCreated:Put"] 
+    events              = ["s3:ObjectCreated:Put"]
   }
 
   depends_on = [aws_lambda_permission.allow_s3]
 }
 
-
-#sns topic for lambda alerts
+# sns topic for lambda alerts
 resource "aws_sns_topic" "lambda_alerts" {
   name = "lambda-alerts"
 }
@@ -137,6 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "s3_event_failure_alarm" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   alarm_actions       = [aws_sns_topic.lambda_alerts.arn]
+
   dimensions = {
     BucketName = var.bucket_id
   }
@@ -154,6 +157,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_error_alarm" {
   statistic           = "Sum"
   threshold           = 1
   alarm_actions       = [aws_sns_topic.lambda_alerts.arn]
+
   dimensions = {
     FunctionName = aws_lambda_function.lambda_function.function_name
   }

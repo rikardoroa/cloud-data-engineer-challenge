@@ -1,22 +1,22 @@
-#lambda role
+# Lambda Role
 resource "aws_iam_role" "iam_dev_role_pr_mv" {
   name = "iam_for_dev_pr_mv"
-  
+
   assume_role_policy = jsonencode({
-    Version = "2012-10-17",
+    Version   = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
         Principal = {
-          Service = "lambda.amazonaws.com"  
-        },
+          Service = "lambda.amazonaws.com"
+        }
       }
     ]
   })
 }
 
-#lambda policy
+# Lambda Policy
 data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   statement {
     effect = "Allow"
@@ -57,8 +57,7 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   }
 }
 
-
-#attaching role and policy
+# Attaching Role and Policy
 resource "aws_iam_role_policy" "lambda_permissions" {
   name   = "lambda_logging_with_layer"
   role   = aws_iam_role.iam_dev_role_pr_mv.name
