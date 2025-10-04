@@ -3,11 +3,11 @@ resource "aws_iam_role" "iam_dev_role_pr_mv" {
   name = "iam_for_dev_pr_mv"
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
-        Action    = "sts:AssumeRole"
-        Effect    = "Allow"
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
         Principal = {
           Service = "lambda.amazonaws.com"
         }
@@ -19,8 +19,8 @@ resource "aws_iam_role" "iam_dev_role_pr_mv" {
 # Lambda Policy Document
 data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
   statement {
-    sid     = "CloudWatchLogging"
-    effect  = "Allow"
+    sid    = "CloudWatchLogging"
+    effect = "Allow"
     actions = [
       "logs:DescribeLogGroups",
       "logs:DescribeLogStreams",
@@ -31,14 +31,14 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
       "logs:PutLogEvents",
       "logs:PutRetentionPolicy",
       "logs:DeleteLogGroup",
-      "logs:DeleteLogStream",
+      "logs:DeleteLogStream"
     ]
     resources = ["*"]
   }
 
   statement {
-    sid     = "S3AndKMSAccess"
-    effect  = "Allow"
+    sid    = "S3AndKMSAccess"
+    effect = "Allow"
     actions = [
       "s3:ListBucket",
       "s3:GetBucketLocation",
@@ -47,29 +47,29 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
       "s3:PutObject",
       "s3:GetObject",
       "s3:DeleteObject",
-      "kms:*",
+      "kms:*"
     ]
     resources = ["*"]
   }
 
   statement {
-    sid     = "SecretsManagerAccess"
-    effect  = "Allow"
+    sid    = "SecretsManagerAccess"
+    effect = "Allow"
     actions = [
-      "secretsmanager:GetSecretValue",
+      "secretsmanager:GetSecretValue"
     ]
     resources = ["*"]
   }
 
   statement {
-    sid     = "EC2NetworkInterfaceAccess"
-    effect  = "Allow"
+    sid    = "EC2NetworkInterfaceAccess"
+    effect = "Allow"
     actions = [
       "ec2:CreateNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
       "ec2:DeleteNetworkInterface",
       "ec2:AssignPrivateIpAddresses",
-      "ec2:UnassignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses"
     ]
     resources = ["*"]
   }
