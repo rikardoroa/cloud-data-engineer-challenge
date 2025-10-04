@@ -1,0 +1,40 @@
+name: Terraform Pre-Commit Hooks
+
+on:
+  pull_request:
+  push:
+    branches: [ main, develop, feature/** ]
+
+jobs:
+  precommit:
+    runs-on: ubuntu-latest
+    name: Run Terraform Pre-Commit Checks
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.10
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+      - name: Install terraform-docs
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-docs/terraform-docs/main/install.sh | bash
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit hooks
+        working-directory: cloud-data-engineer-challenge
+        run: pre-commit run --all-files
