@@ -88,6 +88,32 @@ class CreateS3Metric:
                     row.get('LONGITUDE'), row.get('LATITUDE')
                 ))
 
+            cur.execute("""
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM pg_views
+                    WHERE schemaname = 'public'
+                    AND viewname = 'v_crime_summary'
+                );
+            """)
+            exists = cur.fetchone()[0]
+
+            if not exists:
+                cur.execute("""
+                    CREATE VIEW v_crime_summary AS
+                    SELECT
+                        offense,
+                        district,
+                        COUNT(*) AS total,
+                        ST_Collect(geom) AS geom_cluster
+                    FROM crime_incidents
+                    WHERE geom IS NOT NULL
+                    GROUP BY offense, district;
+                """)
+                logger.info("View 'v_crime_summary' created successfully.")
+            else:
+                logger.info("View 'v_crime_summary' already exists.")
+
             conn.commit()
             cur.close()
             conn.close()
