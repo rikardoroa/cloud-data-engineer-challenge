@@ -125,7 +125,7 @@ class CreateS3Metric:
 
 
     def get_data(self, table):
-        
+
         """
         Fetches data from a given PostGIS table or view and returns it as JSON.
 
@@ -151,7 +151,7 @@ class CreateS3Metric:
             )
             cur2 = conn.cursor()
 
-                metadata = {
+            metadata = {
                     'crime_incidents': 'select * from crime_incidents',
                     'crime_summary':'select * from v_crime_summary'
             }
