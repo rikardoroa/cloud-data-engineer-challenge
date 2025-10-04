@@ -1,4 +1,3 @@
-
 # Creates the main API Gateway REST API.
 # This defines the root API container for both GET and POST methods.
 resource "aws_api_gateway_rest_api" "t1_db_conn_api" {
@@ -9,7 +8,6 @@ resource "aws_api_gateway_rest_api" "t1_db_conn_api" {
     types = ["REGIONAL"]
   }
 }
-
 
 # Creates a specific resource path under the root of the API.
 resource "aws_api_gateway_resource" "t1_db_conn_api_path" {
@@ -45,13 +43,9 @@ resource "aws_api_gateway_integration" "integration_post" {
   resource_id             = aws_api_gateway_resource.t1_db_conn_api_path.id
   http_method             = aws_api_gateway_method.t1_db_conn_api_post.http_method
   type                    = "AWS_PROXY"
-
-  # With AWS_PROXY integration, the integration method must always be POST
-  # even if the external method (client request) is GET or POST.
   integration_http_method = "POST"
   uri                     = var.invoke_arn
 }
-
 
 # Defines the GET HTTP method for the same API resource.
 resource "aws_api_gateway_method" "t1_db_conn_api_get" {
@@ -80,8 +74,6 @@ resource "aws_api_gateway_integration" "integration_get" {
   resource_id             = aws_api_gateway_resource.t1_db_conn_api_path.id
   http_method             = aws_api_gateway_method.t1_db_conn_api_get.http_method
   type                    = "AWS_PROXY"
-
-
   integration_http_method = "POST"
   uri                     = var.invoke_arn
 }
@@ -92,12 +84,10 @@ resource "aws_lambda_permission" "allow_apigateway" {
   action        = "lambda:InvokeFunction"
   function_name = var.function_name
   principal     = "apigateway.amazonaws.com"
-
-
-  source_arn = "${aws_api_gateway_rest_api.t1_db_conn_api.execution_arn}/dev/*"
+  source_arn    = "${aws_api_gateway_rest_api.t1_db_conn_api.execution_arn}/dev/*"
 }
 
-# deployment for post and get
+# Deployment for POST and GET
 resource "aws_api_gateway_deployment" "api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
 
@@ -110,7 +100,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
     # GET
     aws_api_gateway_method.t1_db_conn_api_get,
     aws_api_gateway_integration.integration_get,
-    aws_api_gateway_method_response.response_200_get,
+    aws_api_gateway_method_response.response_200_get
   ]
 }
 
@@ -122,12 +112,12 @@ resource "aws_api_gateway_stage" "postgresql_api_conn_stage" {
   stage_name    = "dev"
 }
 
-
-#caching and  throttling
+# Caching and throttling
 resource "aws_api_gateway_method_settings" "api_method_settings" {
   rest_api_id = aws_api_gateway_rest_api.t1_db_conn_api.id
   stage_name  = aws_api_gateway_stage.postgresql_api_conn_stage.stage_name
-  method_path = "*/*"   
+  method_path = "*/*"
+
   settings {
     cache_data_encrypted   = false
     cache_ttl_in_seconds   = 0
