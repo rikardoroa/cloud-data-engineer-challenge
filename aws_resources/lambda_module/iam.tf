@@ -45,7 +45,12 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
       "s3:GetObject",
       "s3:DeleteObject",
       "kms:*",
-      "secretsmanager:GetSecretValue"
+      "secretsmanager:GetSecretValue",
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses"
     ]
     resources = ["*"]
   }
