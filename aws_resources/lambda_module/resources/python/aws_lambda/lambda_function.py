@@ -14,7 +14,7 @@ def lambda_handler(event, context):
 
     try:
         get_conn  = GetDbConnection()
-        payload = get_conn.validate_connection()
+        payload = get_conn.get_connection()
         logger.info(payload)
 
 
@@ -40,12 +40,18 @@ def lambda_handler(event, context):
             return query
     
         return {
-        'statusCode': 400,
+        "statusCode": 400,
+        "headers": {"Content-Type": "application/json"},
         "body": json.dumps({"error": "Invalid request. Provide 'table' parameter or S3 event."})
         }
 
     except Exception as e:
         logger.error(f'can not deply changes in some resources:{str(e)}')
+        return {
+        "statusCode": 500,
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps({"error": str(e)})
+        }
         
 
     

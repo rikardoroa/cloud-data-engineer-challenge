@@ -4,7 +4,7 @@ import json
 from utils import UtilsComponents
 import logging
 import psycopg2
-
+from psycopg2.extras import execute_values
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -63,28 +63,56 @@ class GetBucketData:
             )
             cur = conn.cursor()
 
-            # Insert each record
-            for _, row in df.iterrows():
-                cur.execute("""
-                    INSERT INTO crime_incidents (
-                        ccn, report_date, shift, method, offense, block,
-                        ward, district, psa, neighborhood_cluster,
-                        latitude, longitude, geom
-                    )
-                    VALUES (
-                        %s, %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s,
-                        %s, %s,
-                        ST_SetSRID(ST_MakePoint(%s, %s), 4326)
-                    );
-                """, (
-                    row.get('CCN'), row.get('REPORT_DAT'), row.get('SHIFT'),
-                    row.get('METHOD'), row.get('OFFENSE'), row.get('BLOCK'),
-                    row.get('WARD'), row.get('DISTRICT'), row.get('PSA'),
-                    row.get('NEIGHBORHOOD_CLUSTER'),
-                    row.get('LATITUDE'), row.get('LONGITUDE'),
-                    row.get('LONGITUDE'), row.get('LATITUDE')
-                ))
+            records = [
+            (
+                row.get('CCN'), row.get('REPORT_DAT'), row.get('SHIFT'),
+                row.get('METHOD'), row.get('OFFENSE'), row.get('BLOCK'),
+                row.get('WARD'), row.get('DISTRICT'), row.get('PSA'),
+                row.get('NEIGHBORHOOD_CLUSTER'),
+                row.get('LATITUDE'), row.get('LONGITUDE'),
+                row.get('LONGITUDE'), row.get('LATITUDE')
+            )
+            for _, row in df.iterrows()
+            ]
+
+            # sql template
+            template = """
+            (%s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s,
+            %s, %s,
+            ST_SetSRID(ST_MakePoint(%s, %s), 4326))
+            """
+
+            execute_values(cur, f"""
+                INSERT INTO crime_incidents (
+                    ccn, report_date, shift, method, offense, block,
+                    ward, district, psa, neighborhood_cluster,
+                    latitude, longitude, geom
+                ) VALUES %s;
+            """, records, template=template)
+
+            # # Insert each record
+            # for _, row in df.iterrows():
+            #     cur.execute("""
+            #         INSERT INTO crime_incidents (
+            #             ccn, report_date, shift, method, offense, block,
+            #             ward, district, psa, neighborhood_cluster,
+            #             latitude, longitude, geom
+            #         )
+            #         VALUES (
+            #             %s, %s, %s, %s, %s, %s,
+            #             %s, %s, %s, %s,
+            #             %s, %s,
+            #             ST_SetSRID(ST_MakePoint(%s, %s), 4326)
+            #         );
+            #     """, (
+            #         row.get('CCN'), row.get('REPORT_DAT'), row.get('SHIFT'),
+            #         row.get('METHOD'), row.get('OFFENSE'), row.get('BLOCK'),
+            #         row.get('WARD'), row.get('DISTRICT'), row.get('PSA'),
+            #         row.get('NEIGHBORHOOD_CLUSTER'),
+            #         row.get('LATITUDE'), row.get('LONGITUDE'),
+            #         row.get('LONGITUDE'), row.get('LATITUDE')
+            #     ))
 
             cur.execute("""
                 SELECT EXISTS (

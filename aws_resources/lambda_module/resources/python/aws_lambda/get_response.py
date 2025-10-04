@@ -61,9 +61,14 @@ class GetTableResponse:
                     columns = [desc[0] for desc in cur2.description]
                     df = pd.DataFrame(table_results, columns=columns)
                     all_data = json.loads(df.to_json(orient='records'))
+                    cur2.close()
+                    conn2.close()
                     return all_data
                 else:
+                    cur2.close()
+                    conn2.close()
                     return [{"error": f"Invalid table '{table}' specified."}]
+                
             except Exception  as e:
                 logger.error(f'[ERROR] can not create the dataframe: {str(e)}')
 
