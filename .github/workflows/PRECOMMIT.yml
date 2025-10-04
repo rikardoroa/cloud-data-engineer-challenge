@@ -30,7 +30,10 @@ jobs:
 
       - name: Install terraform-docs
         run: |
-          curl -s https://raw.githubusercontent.com/terraform-docs/terraform-docs/main/install.sh | bash
+          curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/latest/download/terraform-docs-v0.17.0-linux-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          sudo mv terraform-docs /usr/local/bin/
+          terraform-docs --version
 
       - name: Install pre-commit
         run: pip install pre-commit

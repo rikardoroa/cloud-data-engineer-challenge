@@ -7,3 +7,6 @@ repos:
       - id: terraform_tflint
         args:
           - "--args=--module"
+      - id: terraform_docs
+        args:
+          - "--args=--output-file=README.md"
