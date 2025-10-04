@@ -73,6 +73,19 @@ data "aws_iam_policy_document" "pipeline_dev_policy_pr_mv" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "RDSBackupAccess"
+    effect = "Allow"
+    actions = [
+      "rds:CreateDBSnapshot",
+      "rds:DescribeDBSnapshots",
+      "rds:DeleteDBSnapshot",
+      "rds:CopyDBSnapshot",
+      "rds:DescribeDBInstances"
+    ]
+    resources = ["*"]
+  }
 }
 
 # Attach Inline Policy to Role
