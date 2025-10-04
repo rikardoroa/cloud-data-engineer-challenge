@@ -16,7 +16,6 @@ def lambda_handler(event, context):
     curated_df = get_metric.get_event(event)
     payload= get_conn.validate_connection()
 
-    
     logger.info(curated_df)
     logger.info(payload)
     
