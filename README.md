@@ -66,6 +66,27 @@ Update the `backend.hcl` file with your Terraform backend configuration:
 bucket = "your-bucket"
 ```
 
+---
+
+### ⚙️ 4️⃣ Required Environment Variables
+
+Before running Terraform or executing GitHub Actions pipelines, make sure the following **environment variables** are configured.  
+If they are missing, the **pipeline will fail** during deployment or Lambda provisioning.
+
+| Variable | Description |
+|-----------|--------------|
+| `DB_NAME` | Name of the PostgreSQL database created in RDS |
+| `DB_PASSWORD` | Password for the database user |
+| `AWS_ACCESS_KEY_ID` | AWS access key ID for authentication |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret access key associated with the account |
+
+**These variables must be configured under the repository’s:**  
+👉 `Settings → Secrets and variables → Actions → Repository secrets`  
+
+The GitHub Actions workflow automatically loads these variables at runtime to authenticate and provision AWS resources.
+
+---
+
 ## ⚙️ Architecture
 
 ### 🔹 Key Components
