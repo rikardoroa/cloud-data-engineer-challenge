@@ -2,14 +2,11 @@
 # terraform-docs configuration file for the project
 # This file controls how Terraform automatic documentation is generated
 
-# Format of the generated documentation (markdown table, markdown document, json, etc.)
+# Format of the generated documentation
 formatter: "markdown table"
 
 # Version string to be included in the documentation (empty = not displayed)
 version: ""
-
-# File to extract header content from (commented out to avoid empty value error)
-# header-from: "main.tf"
 
 # File to extract footer content from (empty = no footer)
 footer-from: ""
@@ -20,45 +17,29 @@ recursive:
 
 # Sections to hide or show in the output
 sections:
-  hide: []  # List of sections to hide
-  show: []  # List of sections to show (empty = show all)
+  hide: []
+  show: []
 
 # Custom content template (empty = use default)
 content: ""
 
-# Output file configuration
-# IMPORTANT: mode: inject preserves your original content
-# Only updates content between <!-- BEGIN_TF_DOCS --> and <!-- END_TF_DOCS --> markers
-output:
-  file: "README.md"           # Target file for documentation
-  mode: inject                # Inject mode instead of replacing entire file
-  template: |-
-    <!-- BEGIN_TF_DOCS -->
-    {{ .Content }}
-    <!-- END_TF_DOCS -->
-
-# Output values configuration
-output-values:
-  enabled: false              # Enable output values from Terraform state
-  from: ""                    # File to read output values from
-
 # Sorting configuration
 sort:
-  enabled: true               # Enable sorting of elements
-  by: name                    # Sort by: name, required, type
+  enabled: true
+  by: name
 
 # Additional settings for documentation generation
 settings:
-  anchor: true                # Add HTML anchors to sections
-  color: true                 # Enable colored output in terminal
-  default: true               # Show default values for inputs
-  description: false          # Show descriptions from variables
-  escape: true                # Escape special characters
-  hide-empty: false           # Hide empty sections
-  html: true                  # Allow HTML in markdown output
-  indent: 2                   # Indentation level for nested items
-  lockfile: true              # Read providers from lock file
-  read-comments: true         # Read comments from Terraform files
-  required: true              # Show required column for inputs
-  sensitive: true             # Show sensitive column for inputs/outputs
-  type: true                  # Show type column for inputs/outputs
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true
