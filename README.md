@@ -6,6 +6,65 @@ This project builds an **AWS-based data ingestion and processing architecture** 
 All infrastructure is defined and deployed using **Terraform**, featuring **KMS encryption**, **CloudWatch monitoring**, **automatic RDS backups**, and **on-demand view creation** via Lambda.
 
 ---
+## ⚙️ General Overview for Configuration
+
+### 1️⃣ Project Features
+
+This project uses two AWS Services to ingest data into **Snowflake** (or any other target database) through **AWS API Gateway** and a single **AWS Lambda** instance.
+
+---
+
+## 🧰 Prerequisites
+
+### 1️⃣ AWS CLI Installation
+
+The **AWS CLI** is essential for managing credentials and configuring your environment. Follow these steps for installation:
+
+**macOS Installation:**
+```bash
+brew install awscli
+```
+
+**Verify Installation:**
+```bash
+aws --version
+```
+
+**Windows Installation:**  
+For Windows users, refer to the official [AWS CLI Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+
+---
+
+### 2️⃣ Terraform Environment Configuration
+
+**Check if the S3 Bucket Exists:**
+```bash
+aws s3api head-bucket --bucket your_bucket
+```
+
+**Create DynamoDB Table for Terraform State Locking:**
+```bash
+aws dynamodb create-table --table-name terraform-lock-table   --attribute-definitions AttributeName=LockID,AttributeType=S   --key-schema AttributeName=LockID,KeyType=HASH   --billing-mode PAY_PER_REQUEST --region your_region
+```
+
+**Create S3 Bucket for Terraform State:**
+```bash
+aws s3api create-bucket --bucket your_bucket --region your_region   --create-bucket-configuration LocationConstraint=your_region
+```
+
+**Apply Bucket Policies:**
+```bash
+aws s3api put-public-access-block --bucket your_bucket   --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+```
+
+---
+
+### 3️⃣ Backend Configuration for Terraform State
+
+Update the `backend.hcl` file with your Terraform backend configuration:
+```hcl
+bucket = "your-bucket"
+```
 
 ## ⚙️ Architecture
 
