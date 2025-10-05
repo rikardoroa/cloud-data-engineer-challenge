@@ -255,3 +255,6 @@ Includes:
 | **API Gateway** | ✅ | Query interface live |
 | **CI/CD** | ✅ | Automated workflows |
 | **Monitoring** | ✅ | CloudWatch & SNS active |
+
+<!-- BEGIN_TF_DOCS -->
+<!-- END_TF_DOCS -->
