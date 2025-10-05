@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 import psycopg2
 import logging
 from utils import UtilsComponents
+import os
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -33,7 +34,7 @@ class GetDbConnection:
             user = self.secrets['username']
             password = self.secrets['password']
             port = self.secrets['port']
-            new_dbname = "geospatialinfo"
+            new_dbname = os.environ.get("new_db_name")
 
             # Connect to main DB and create geospatial DB if needed
             conn = psycopg2.connect(

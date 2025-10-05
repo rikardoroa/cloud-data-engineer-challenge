@@ -33,3 +33,7 @@ variable "subnet2" {
 variable "security_group_lambda" {
   type = string
 }
+
+variable "db_name" {
+  type = string
+}

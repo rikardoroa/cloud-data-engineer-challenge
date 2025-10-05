@@ -91,8 +91,9 @@ resource "aws_lambda_function" "lambda_function" {
 
   environment {
     variables = {
-      bucket = var.target_bucket
-      key    = var.target_key
+      bucket      = var.target_bucket
+      key         = var.target_key
+      new_db_name = var.db_name
     }
   }
 
