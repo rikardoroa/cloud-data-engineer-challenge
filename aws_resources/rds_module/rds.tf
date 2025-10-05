@@ -4,7 +4,7 @@ resource "aws_db_instance" "postgres" {
   allocated_storage                     = 20
   max_allocated_storage                 = 100
   engine_version                        = "15.7"
-  instance_class                        = "db.t3.micro"
+  instance_class                        = "db.t4g.small"
   username                              = "postgres"
   password                              = var.db_password
   vpc_security_group_ids                = [var.security_group]
@@ -20,8 +20,9 @@ resource "aws_db_instance" "postgres" {
 }
 
 resource "aws_secretsmanager_secret" "rds_secret" {
-  name        = "postgresql_conn"
-  description = "RDS credentials for geospatialdev database"
+  name                     = "postgresql_conn"
+  description              = "RDS credentials for geospatialdev database"
+  recovery_window_in_days  = 0
 }
 
 resource "aws_secretsmanager_secret_version" "rds_secret_value" {
