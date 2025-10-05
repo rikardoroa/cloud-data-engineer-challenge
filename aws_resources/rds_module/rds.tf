@@ -10,9 +10,9 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name       = var.subnet_group
   skip_final_snapshot        = true
   storage_encrypted          = true
-  backup_retention_period    = 7            
-  deletion_protection        = true         
-  auto_minor_version_upgrade = true      
+  backup_retention_period    = 7
+  deletion_protection        = true
+  auto_minor_version_upgrade = true
 }
 
 resource "aws_secretsmanager_secret" "rds_secret" {
