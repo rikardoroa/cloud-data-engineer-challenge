@@ -19,7 +19,7 @@ resource "aws_db_instance" "postgres" {
   performance_insights_retention_period = 7
 }
 
-resource "aws_secretsmanager_secret" "rds_secret" {
+resource "aws_secretsmanager_secret" "rds_secret_postgresql" {
   name                    = "postgresql_conn"
   description             = "RDS credentials for geospatialdev database"
   recovery_window_in_days = 0
