@@ -11,7 +11,7 @@ module "aws_network_utils" {
 # lambda module
 module "aws_lambda_utils" {
   source                = "./lambda_module"
-  new_db_name           = var.db_name
+  db_name               = var.db_name
   target_bucket         = module.bucket_utils.target_bucket
   target_key            = module.bucket_utils.target_key
   bucket_arn            = module.bucket_utils.bucket_arn
