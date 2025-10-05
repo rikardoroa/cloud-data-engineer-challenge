@@ -73,6 +73,7 @@ Lambda:
 - Converts coordinates to PostGIS geometry.  
 - Inserts into `crime_incidents`.  
 - Creates or replaces the summary view.
+- Creates the DB Backup implementing a dynamic snapshot
 
 Example SQL (executed by Lambda):
 ```sql
