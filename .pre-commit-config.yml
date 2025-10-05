@@ -9,4 +9,6 @@ repos:
           - "--args=--call-module-type=all"
       - id: terraform_docs
         args:
-          - "--args=--output-file=README.md"
+          - "--hook-config=--path-to-file=README.md"
+          - "--hook-config=--add-to-existing-file=true"
+          - "--hook-config=--create-file-if-not-exist=false"

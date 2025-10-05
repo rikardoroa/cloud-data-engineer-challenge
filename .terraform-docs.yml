@@ -1,0 +1,74 @@
+---
+# Configuración de terraform-docs para el proyecto
+# Este archivo controla cómo se genera la documentación automática de Terraform
+
+formatter: "markdown table"
+
+version: ""
+
+header-from: ""
+footer-from: ""
+
+recursive:
+  enabled: false
+
+sections:
+  hide: []
+  show: []
+
+content: ""
+
+# IMPORTANTE: mode: inject mantiene tu contenido original
+# Solo actualiza el contenido entre los marcadores <!-- BEGIN_TF_DOCS --> y <!-- END_TF_DOCS -->
+output:
+  file: "README.md"
+  mode: inject  # Inyecta en lugar de reemplazar todo el archivo
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    ## Requirements
+
+    {{ .Requirements }}
+
+    ## Providers
+
+    {{ .Providers }}
+
+    ## Modules
+
+    {{ .Modules }}
+
+    ## Resources
+
+    {{ .Resources }}
+
+    ## Inputs
+
+    {{ .Inputs }}
+
+    ## Outputs
+
+    {{ .Outputs }}
+    <!-- END_TF_DOCS -->
+
+output-values:
+  enabled: false
+  from: ""
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true
