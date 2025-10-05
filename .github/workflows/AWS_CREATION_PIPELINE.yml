@@ -1,8 +1,8 @@
 name: AWS RESOURCES CREATION PIPELINE
 on:
-  # push:
-  #   branches: [ main, nanlabs_challenge]
-  workflow_dispatch:
+  push:
+    branches: [ main, nanlabs_challenge]
+
 
 jobs:
   terraform:
