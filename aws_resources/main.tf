@@ -1,11 +1,17 @@
 # bucket module
 module "bucket_utils" {
   source = "./bucket_module"
+  providers = {
+    aws = aws
+  }
 }
 
 # network module
 module "aws_network_utils" {
   source = "./network_module"
+  providers = {
+    aws = aws
+  }
 }
 
 # lambda module
@@ -18,6 +24,9 @@ module "aws_lambda_utils" {
   bucket_id             = module.bucket_utils.bucket_id
   security_group_lambda = module.aws_network_utils.security_group_lambda
   subnet2               = module.aws_network_utils.subnet2
+  providers = {
+    aws = aws
+  }
 }
 
 # RDS module
@@ -26,6 +35,9 @@ module "aws_rds_utils" {
   db_password    = var.db_password
   security_group = module.aws_network_utils.security_group
   subnet_group   = module.aws_network_utils.subnet_group
+  providers = {
+    aws = aws
+  }
 }
 
 # API Gateway module
@@ -33,4 +45,7 @@ module "aws_api_gateway_utils" {
   source        = "./api_gateway_module"
   invoke_arn    = module.aws_lambda_utils.invoke_arn
   function_name = module.aws_lambda_utils.lambda_function
+  providers = {
+    aws = aws
+  }
 }
