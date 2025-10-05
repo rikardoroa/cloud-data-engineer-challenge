@@ -20,9 +20,9 @@ resource "aws_db_instance" "postgres" {
 }
 
 resource "aws_secretsmanager_secret" "rds_secret" {
-  name                     = "postgresql_conn"
-  description              = "RDS credentials for geospatialdev database"
-  recovery_window_in_days  = 0
+  name                    = "postgresql_conn"
+  description             = "RDS credentials for geospatialdev database"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "rds_secret_value" {
