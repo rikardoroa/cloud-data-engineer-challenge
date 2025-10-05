@@ -75,7 +75,7 @@ If they are missing, the **pipeline will fail** during deployment or Lambda prov
 
 | Variable | Description |
 |-----------|--------------|
-| `DB_NAME` | variable used in the lambda for PosgreSQL database creation  |
+| `DB_NAME` | Variable used in the AWS Lambda for PosgreSQL database creation  |
 | `DB_PASSWORD` | Password used in RDS module for default database access |
 | `AWS_ACCESS_KEY_ID` | AWS access key ID for authentication |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key associated with the account |
