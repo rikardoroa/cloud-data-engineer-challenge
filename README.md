@@ -199,10 +199,10 @@ Located in `.github/workflows/`:
 #### `AWS_DESTROY_PIPELINES.yml`
 - Manual cleanup workflow for teardown.
 
-#### Pre-commit Hooks
-Validate locally before committing:
+#### `PRECOMMIT.yml`
+- Validate locally before committing:
 ```bash
-pre-commit run --all-files
+pre-commit run --all-files --show-diff-on-failure
 ```
 Includes:
 - `terraform_fmt`
