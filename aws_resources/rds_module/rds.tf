@@ -25,7 +25,7 @@ resource "aws_secretsmanager_secret" "rds_secret_postgresql" {
   recovery_window_in_days = 0
 }
 
-resource "aws_secretsmanager_secret_version" "rds_secret_value" {
+resource "aws_secretsmanager_secret_version" "rds_secret_value_db" {
   secret_id = aws_secretsmanager_secret.rds_secret_postgresql.id
   secret_string = jsonencode({
     username = "postgres"
