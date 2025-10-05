@@ -3,5 +3,8 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
+    docker = {
+      source = "kreuzwerker/docker"
+    }
   }
 }
