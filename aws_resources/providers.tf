@@ -18,6 +18,13 @@ terraform {
       version = "~> 3.0"
     }
   }
+
+  backend "s3" {
+    encrypt        = true
+    key            = "terraform/state/terraform.tfstate"
+    dynamodb_table = "terraform-status-table"
+    region         = "us-east-2"
+  }
 }
 
 provider "aws" {
