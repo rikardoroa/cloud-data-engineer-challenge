@@ -19,14 +19,14 @@ resource "aws_db_instance" "postgres" {
   performance_insights_retention_period = 7
 }
 
-resource "aws_secretsmanager_secret" "rds_secret_postgresql" {
-  name                    = "postgresql_conn"
+resource "aws_secretsmanager_secret" "rds_secret" {
+  name                    = "postgresql_conn_db"
   description             = "RDS credentials for geospatialdev database"
   recovery_window_in_days = 0
 }
 
-resource "aws_secretsmanager_secret_version" "rds_secret_value_db" {
-  secret_id = aws_secretsmanager_secret.rds_secret_postgresql.id
+resource "aws_secretsmanager_secret_version" "rds_secret_value" {
+  secret_id = aws_secretsmanager_secret.rds_secret.id
   secret_string = jsonencode({
     username = "postgres"
     password = var.db_password
