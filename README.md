@@ -335,6 +335,3 @@ Includes:
 | **API Gateway** | ✅ | Query interface live |
 | **CI/CD** | ✅ | Automated workflows |
 | **Monitoring** | ✅ | CloudWatch & SNS active |
-
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
