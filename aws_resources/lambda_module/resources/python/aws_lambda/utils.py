@@ -17,7 +17,7 @@ class UtilsComponents:
         """
         self.session = boto3.session.Session()
         self.client = self.session.client(service_name='secretsmanager')
-        self.secret = "postgresql_conn"
+        self.secret = "postgresql_conn_db"
         self.rds = boto3.client('rds')
 
     def get_secret(self):
