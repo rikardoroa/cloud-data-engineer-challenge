@@ -9,19 +9,21 @@ from psycopg2.extras import execute_values
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-secret_utils = UtilsComponents()
+utils = UtilsComponents()
 
 class GetBucketData:
 
 
     def __init__(self):
-        self.secrets = secret_utils.get_secret()
+        self.secrets = utils.get_secret()
         self.s3_client = boto3.client('s3')
         self.host = self.secrets['host'].split(":")[0]
         self.db_name = 'geospatialinfo'
         self.user = self.secrets['username']
         self.password = self.secrets['password']
         self.port = self.secrets['port']
+        self.create_snapshot = utils.create_rds_snapshot
+
 
     
     def schema_validation(self, df):
@@ -177,6 +179,11 @@ class GetBucketData:
             conn.close()
 
             logger.info("Crime data loaded successfully into PostGIS.")
+
+            self.create_snapshot()
+            logger.info("Instance Backup started.")
+
+
             return {"rows_inserted": len(df)}
 
 

@@ -5,7 +5,6 @@ from botocore.exceptions import ClientError
 import psycopg2
 import logging
 from utils import UtilsComponents
-from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -20,7 +19,6 @@ class GetDbConnection:
         Initializes the AWS Secrets Manager client to retrieve PostgreSQL credentials.
         """
         self.secrets = secret_utils.get_secret()
-        self.rds = boto3.client('rds')
 
     def get_connection(self):
         """
@@ -106,9 +104,6 @@ class GetDbConnection:
 
             cur2.close()
             conn2.close()
-            
-            #creating db backup
-            self.create_rds_snapshot()
 
             return {
                 "database_created": new_dbname,
@@ -118,20 +113,3 @@ class GetDbConnection:
             
         except Exception as e:
             logger.error(f"[ERROR] cannot connect to the database: {str(e)}")
-            return {"error": str(e)}
-
-
-    def create_rds_snapshot(self):
-        db_instance = "dbgeospatialdev"
-        snapshot_id = f"{db_instance}-snapshot-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
-
-        response = self.rds.create_db_snapshot(
-            DBSnapshotIdentifier=snapshot_id,
-            DBInstanceIdentifier=db_instance
-        )
-
-        return {
-            "status": "snapshot_started",
-            "snapshot_id": snapshot_id,
-            "response": response
-        }
