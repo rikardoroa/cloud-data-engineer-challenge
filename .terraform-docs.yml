@@ -34,29 +34,7 @@ output:
   mode: inject                # Inject mode instead of replacing entire file
   template: |-
     <!-- BEGIN_TF_DOCS -->
-    ## Requirements
-
-    {{ .Requirements }}
-
-    ## Providers
-
-    {{ .Providers }}
-
-    ## Modules
-
-    {{ .Modules }}
-
-    ## Resources
-
-    {{ .Resources }}
-
-    ## Inputs
-
-    {{ .Inputs }}
-
-    ## Outputs
-
-    {{ .Outputs }}
+    {{ .Content }}
     <!-- END_TF_DOCS -->
 
 # Output values configuration
