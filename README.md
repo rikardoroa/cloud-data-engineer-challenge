@@ -115,7 +115,7 @@ This repository includes a directory named **`sample_files/`**, which contains e
 #### 📝 Notes
 
 - Only `.csv` files should be uploaded.  
-- The schema (columns, types) must match what your Lambda expects.  
+- The schema (columns, types) will be validated for the lambda.  
 
 
 ---
