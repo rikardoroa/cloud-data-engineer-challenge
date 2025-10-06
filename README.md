@@ -7,6 +7,33 @@ All infrastructure is defined and deployed using **Terraform**, featuring **KMS 
 
 ---
 
+## ⚠️ Critical Configuration Notes
+
+The **bucket configuration** is a critical part of this project. Two different S3 buckets are required:
+
+1. **Terraform State Bucket** – used to store the Terraform state file (`terraform.tfstate`).  
+2. **Data Upload Bucket** – used to upload files that trigger the Lambda function.
+
+### 🪣 Terraform State Bucket
+- This bucket is configured in the `backend.hcl` file.  
+- If you want to **change the bucket name**:
+  - First, **validate that the bucket does not already exist** in your AWS account.  
+  - Then, **create the new bucket** following the same steps described in the [Prerequisites](#-prerequisites) section.  
+  - Finally, update the `bucket` value in the `backend.hcl` file to match the new name.
+
+### 📂 Data Upload Bucket
+- This bucket is where files are uploaded to trigger the Lambda function.  
+- If you want to **change the variable name or bucket value**, update it in:
+  ```
+  bucket_module → variables.tf → default value
+  ```
+- Before changing it, **make sure that the bucket exists**, as explained in the prerequisites section.  
+- Terraform uses this variable to connect the S3 event notification with the Lambda function, so the name must match an existing bucket.
+
+Incorrect configuration of either bucket will prevent Terraform from deploying or the Lambda from being triggered correctly.
+
+---
+
 ## 🧰 Prerequisites
 
 ### 1️⃣ AWS CLI Installation
@@ -66,7 +93,7 @@ Once the Terraform infrastructure is deployed, you can **trigger the Lambda func
 
 Each time a new object is uploaded, the **S3 event notification** will invoke the Lambda to process the data and store it in the PostgreSQL database.
 
-### 📁 Using the `sample_files` Folder
+### 📁 Use the `sample_files` Folder
 
 This repository includes a directory named **`sample_files/`**, which contains example files to test the Lambda integration.
 
