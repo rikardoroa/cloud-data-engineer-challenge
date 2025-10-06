@@ -6,13 +6,6 @@ This project builds an **AWS-based data ingestion and processing architecture** 
 All infrastructure is defined and deployed using **Terraform**, featuring **KMS encryption**, **CloudWatch monitoring**, **automatic RDS backups**, and **on-demand view creation** via Lambda.
 
 ---
-## ⚙️ General Overview for Configuration
-
-### 1️⃣ Project Features
-
-This project uses two AWS Services to ingest data into **Snowflake** (or any other target database) through **AWS API Gateway** and a single **AWS Lambda** instance.
-
----
 
 ## 🧰 Prerequisites
 
@@ -65,8 +58,41 @@ Update the `backend.hcl` file with your Terraform backend configuration:
 ```hcl
 bucket = "your-bucket"
 ```
+---
+
+## 📦 Triggering the Lambda Function via S3
+
+Once the Terraform infrastructure is deployed, you can **trigger the Lambda function automatically** by uploading files to the configured **S3 bucket**.
+
+Each time a new object is uploaded, the **S3 event notification** will invoke the Lambda to process the data and store it in the PostgreSQL database.
+
+### 📁 Using the `sample_files` Folder
+
+This repository includes a directory named **`sample_files/`**, which contains example files to test the Lambda integration.
+
+#### 🧪 Steps to Trigger the Lambda
+
+1. Identify your S3 bucket name from Terraform outputs or the AWS Console.  
+2. Upload a sample file from the `sample_files` directory:
+   ```bash
+   aws s3 cp sample_files/example_data.csv s3://your_bucket_name/
+   ```
+3. The **S3 ObjectCreated:Put** event will automatically **invoke the Lambda**.  
+4. The Lambda function reads and processes the file, then loads the resulting data into **RDS (PostgreSQL)**.  
+5. Check Lambda execution logs in:
+   ```
+   Amazon CloudWatch → Log groups → /aws/lambda/your_lambda_name
+   ```
+6. Also the lambda can be triggered loading the files manually using AWS Console directly
+
+#### 📝 Notes
+
+- Only `.csv` files should be uploaded.  
+- The schema (columns, types) must match what your Lambda expects.  
+
 
 ---
+
 
 ### ⚙️ 4️⃣ Required Environment Variables
 
