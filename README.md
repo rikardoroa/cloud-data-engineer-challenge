@@ -179,18 +179,18 @@ aws_resources/
 │   ├── iam.tf
 │   ├── lambda.tf
 │   └── resources/python/aws_lambda/
-│       ├── lambda_function.py
-│       ├── get_connection.py      # Includes RDS snapshot logic
-│       ├── get_transformation.py  # Inserts data and creates view v_crime_summary
-│       ├── get_response.py
-│       ├── get.py
-│       └── utils.py
-├── api_gateway_module/      # REST API Gateway (AWS_PROXY)
-├── network_module/          # VPC, subnets, NAT, SG
-├── rds_module/              # PostgreSQL RDS + Secrets Manager
+│       ├── lambda_function.py     # Lambda handler entry point
+│       ├── get_connection.py      # Validates DB connection and creates the target table
+│       ├── get_transformation.py  # Inserts data and builds view v_crime_summary
+│       ├── get_response.py        # Dynamically selects data and generates JSON response
+│       ├── get.py                 # Builds the body structure for GET API responses
+│       └── utils.py               # Common utilities (backup and secret)
+├── api_gateway_module/      # REST API Gateway (AWS_PROXY integration)
+├── network_module/          # VPC, subnets, NAT Gateway, and Security Groups
+├── rds_module/              # PostgreSQL RDS + AWS Secrets Manager integration
 ├── providers.tf             # AWS provider definition
-├── backend.hcl              # Remote backend (S3 + DynamoDB)
-└── .pre-commit-config.yaml  # Pre-commit validation
+├── backend.hcl              # Remote backend configuration (S3 + DynamoDB)
+└── .pre-commit-config.yaml  # Pre-commit hooks for Terraform validation
 ```
 
 ---
