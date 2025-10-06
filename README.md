@@ -208,7 +208,7 @@ Lambda:
 - Creates or replaces the summary view.
 - Creates the DB Backup implementing a dynamic snapshot
 
-Example SQL (executed by Lambda):
+View created:
 ```sql
 CREATE OR REPLACE VIEW v_crime_summary AS
 SELECT
