@@ -227,7 +227,7 @@ GROUP BY offense, district;
 
 **Request:**
 ```
-GET /https://lrph5cswsc.execute-api.us-east-2.amazonaws.com/dev/postgresql-api-conn-path?table=crime_incidents
+GET /https://your_api_gateway_endpoint_path?table=crime_incidents
 ```
 
 **Real Response Example:**
@@ -254,7 +254,7 @@ GET /https://lrph5cswsc.execute-api.us-east-2.amazonaws.com/dev/postgresql-api-c
 
 **Querying the view:**
 ```
-GET /https://lrph5cswsc.execute-api.us-east-2.amazonaws.com/dev/postgresql-api-conn-path?table=crime_summary
+GET /https://your_api_gateway_endpoint_path?table=crime_summary
 ```
 **Real Response Example:**
 ```json
